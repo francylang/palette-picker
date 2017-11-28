@@ -12,10 +12,11 @@ const generateRandomColor = () => {
 const updateRandomColors = (i) => {
   for (var i = 0; i < 6; i++) {
 
-  if(!$(`.color${i}`).hasClass('unlocked-image')) {
+  if(!$(`.color${i}`).hasClass('unlocked-icon')) {
     let color = generateRandomColor()
     $(`.color${i}`).css('background-color', color);
-    $(`.hex-code${i}`).text(color)
+    $(`.code${i}`).text(color)
+    console.log(color);
   };
  };
 };
@@ -25,9 +26,13 @@ $(document).ready(() => {
 });
 
 // TOGGLE LOCKED and UNLOCKED
-$('.color-container').on('click', '.unlocked-image', (e) => {
-  $(e.target).toggleClass('locked-image')
+$('.color-container').on('click', '.unlocked-icon', (e) => {
+  $(e.target).toggleClass('locked-icon')
+  console.log(e.target);
 })
+
+// FREEZE COLOR ON LOCK
+
 
 // GENERATING RANDOM COLOR
 $('.generate-button').on('click', updateRandomColors)
