@@ -1,0 +1,69 @@
+/*http://palettab.com/*/
+
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+main {
+  display: flex;
+}
+
+.projects-palettes-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  font-size: 2em;
+}
+
+.generate-button-container {
+  display: flex;
+  flex-direction: column;
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  width: 100%;
+}
+
+.generate-button {
+  /*width: 60em;*/
+  /*padding: 2em;*/
+  cursor: pointer;
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  border: 2px solid blue;
+}
+
+.color-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.color {
+  padding: 4.1em;
+  border: 2px solid teal;
+}
+
+.create-new-projects-container {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid violet;
+}
