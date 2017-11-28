@@ -8,20 +8,35 @@ const generateRandomColor = () => {
   return color;
 };
 
-$(document).ready(() => {
-  updateRandomColors();
-});
 
 const updateRandomColors = (i) => {
   for (var i = 0; i < 6; i++) {
-
-  if(!$(`.color${i}`).hasClass('unlocked-image')) {
+  if(!$(`.color${i}`).hasClass('locked')) {
     let color = generateRandomColor()
     $(`.color${i}`).css('background-color', color);
-    $(`.hex-code${i}`).text(color)
+    $(`.code${i}`).text(color)
+    console.log(color);
   };
  };
 };
 
 
+// GENERATE RANDOM COLOR ON PAGE LOAD
+$(document).ready(() => {
+  updateRandomColors();
+});
+
+// TOGGLE LOCKED and UNLOCKED
+// FREEZE COLOR ON LOCK
+$('.color-container').on('click', '.unlocked-icon', (e) => {
+  $(e.target).toggleClass('locked-icon')
+  console.log($(e.target).parents('.color').toggleClass('locked'));
+})
+
+
+// if locked-icon, color = hex-code
+
+
+
+// GENERATING RANDOM COLOR
 $('.generate-button').on('click', updateRandomColors)
