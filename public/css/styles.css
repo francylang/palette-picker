@@ -28,6 +28,7 @@ h1 {
   justify-content: center;
   width: 70%;
   font-size: 80px;
+  margin: 35px;
   font-family: 'Give You Glory', cursive;
 }
 
@@ -57,11 +58,12 @@ h1 {
   justify-content: center;
   align-items: center;
   width: 95%;
-  margin: 20px;
+  margin: 35px;
 }
 
 .new-palette-drop-down {
   font-size: 20px;
+  cursor: pointer;
 }
 
 .new-palette-name {
@@ -99,7 +101,27 @@ aside {
 }
 
 .color {
-  padding: 4.75em 0;
+  /*padding: 42px 0;*/
+}
+
+.color-card-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.unlocked-image {
+  width: 50px;
+  height: 50px;
+  background-image: url('../assets/unlocked.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
+
+.hex-code {
+  color: #fff;
+  font-size: 36px;
 }
 
 .color-1 {
@@ -152,4 +174,9 @@ h3 {
   padding-top: 10px;
   outline: none;
   cursor: pointer;
+}
+
+.new-project-save-button:hover {
+  color: #fff;
+  background-color: #000;
 }
