@@ -3,6 +3,7 @@
 * {
   box-sizing: border-box;
   font-family: sans-serif;
+  font-family: 'Give You Glory', cursive;
 }
 
 main {
@@ -12,13 +13,11 @@ main {
 .projects-palettes-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100%;
 }
 
 header {
   display: flex;
-  align-items: center;
   justify-content: center;
   width: 100%;
 }
@@ -28,28 +27,72 @@ h1 {
   align-items: center;
   justify-content: center;
   width: 70%;
-  font-size: 2em;
+  font-size: 80px;
+  margin: 35px;
+  font-family: 'Give You Glory', cursive;
 }
 
 .generate-button-container {
   display: flex;
   flex-direction: column;
-  /*align-items: center;*/
-  /*justify-content: center;*/
+  align-items: center;
   width: 100%;
 }
 
 .generate-button {
-  /*width: 60em;*/
-  /*padding: 2em;*/
+  width: 95%;
+  border-radius: 25px;
+  font-size: 20px;
+  padding-top: 10px;
+  outline: none;
   cursor: pointer;
+}
+
+.generate-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.new-palette-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 95%;
+  margin: 35px;
+}
+
+.new-palette-drop-down {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.new-palette-name {
+  font-size: 20px;
+  margin: 0 6px 0 30px;
+  padding: 5px 0 0 5px;
+  width: 240px;
+}
+
+.new-palette-save-button {
+  font-size: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 20px;
+  margin: 10px;
+  padding-top: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.new-palette-save-button:hover {
+  color: #fff;
+  background-color: #000;
 }
 
 aside {
   display: flex;
   flex-direction: column;
-  width: 70%;
-  border: 2px solid blue;
+  width: 75%;
 }
 
 .color-container {
@@ -58,12 +101,82 @@ aside {
 }
 
 .color {
-  padding: 4.1em;
-  border: 2px solid teal;
+  /*padding: 42px 0;*/
+}
+
+.color-card-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.unlocked-image {
+  width: 50px;
+  height: 50px;
+  background-image: url('../assets/unlocked.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
+
+.hex-code {
+  color: #fff;
+  font-size: 36px;
+}
+
+.color-1 {
+  background-color: #06AED5;
+}
+
+.color-2 {
+  background-color: #086788;
+}
+
+.color-3 {
+  background-color: #F0C808;
+}
+
+.color-4 {
+  background-color: #FFF1D0;
+}
+
+.color-5 {
+  background-color: #DD1C1A;
 }
 
 .create-new-projects-container {
   display: flex;
   flex-direction: column;
-  border: 2px solid violet;
+  width: 95%;
+  margin-left: 30px;
+}
+
+h3 {
+  font-size: 20px;
+  margin-bottom: 0;
+}
+
+.new-project-container {
+}
+
+.new-project-title {
+  font-size: 20px;
+  padding: 5px 0 0 5px;
+  width: 240px;
+}
+
+.new-project-save-button {
+  font-size: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 20px;
+  margin: 10px;
+  padding-top: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.new-project-save-button:hover {
+  color: #fff;
+  background-color: #000;
 }

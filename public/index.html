@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Alegreya Sans SC" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Give+You+Glory" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 
     <title>Palette Picker</title>
@@ -14,11 +14,42 @@
     <main>
       <aside>
         <section class="color-container">
-          <article class="color" id="color-1">color one</article>
-          <article class="color" id="color-2">color two</article>
-          <article class="color" id="color-3">color three</article>
-          <article class="color" id="color-4">color four</article>
-          <article class="color" id="color-5">color five</article>
+
+          <article class="color color-1">
+            <div class="color-card-content">
+              <div class="unlocked-image"></div>
+              <h4 class="hex-code">#</h4>
+            </div>
+          </article>
+
+          <article class="color color-2">
+            <div class="color-card-content">
+              <div class="unlocked-image"></div>
+              <h4 class="hex-code">#</h4>
+            </div>
+          </article>
+
+          <article class="color color-3">
+            <div class="color-card-content">
+              <div class="unlocked-image"></div>
+              <h4 class="hex-code">#</h4>
+            </div>
+          </article>
+
+          <article class="color color-4">
+            <div class="color-card-content">
+              <div class="unlocked-image"></div>
+              <h4 class="hex-code">#</h4>
+            </div>
+          </article>
+
+          <article class="color color-5">
+            <div class="color-card-content">
+              <div class="unlocked-image"></div>
+              <h4 class="hex-code">#</h4>
+            </div>
+          </article>
+
         </section>
       </aside>
 
@@ -31,20 +62,21 @@
           <button class="generate-button">Generate New Palette</button>
         </article>
 
-        <article>
-          <select type="text" name="" value="">
-            <option value="value1" selected>Value1</option>
-            <option value="value2">Value2</option>
+        <article class="new-palette-container">
+          <select class="new-palette-drop-down" type="text" name="" value="">
+            <option value="project1" selected>Project One</option>
+            <option value="project2">Project Two</option>
           </select>
-          <input placeholder="Palette Name"></input>
-          <button>save</button>
+          <input class="new-palette-name" placeholder="New Palette Name"></input>
+          <button class="new-palette-save-button">save</button>
         </article>
 
       <article class="create-new-projects-container">
         <h3>Projects</h3>
-        <h4>Create New Project</h4>
-        <input placeholder="Project Title"></input>
-        <button>save</button>
+        <div class="new-project-container">
+          <input class="new-project-title" placeholder="New Project Title"></input>
+          <button class="new-project-save-button">save</button>
+        </div>
       </article>
     </section>
    </main>
