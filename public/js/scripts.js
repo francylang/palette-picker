@@ -8,18 +8,16 @@ const generateRandomColor = () => {
   return color;
 };
 
-
 const updateRandomColors = (i) => {
   for (var i = 0; i < 6; i++) {
+// if the lock-icon is present, don't generate a random color
   if(!$(`.color${i}`).hasClass('locked')) {
     let color = generateRandomColor()
     $(`.color${i}`).css('background-color', color);
     $(`.code${i}`).text(color)
-    console.log(color);
   };
  };
 };
-
 
 // GENERATE RANDOM COLOR ON PAGE LOAD
 $(document).ready(() => {
@@ -30,13 +28,8 @@ $(document).ready(() => {
 // FREEZE COLOR ON LOCK
 $('.color-container').on('click', '.unlocked-icon', (e) => {
   $(e.target).toggleClass('locked-icon')
-  console.log($(e.target).parents('.color').toggleClass('locked'));
+  $(e.target).parents('.color').toggleClass('locked');
 })
-
-
-// if locked-icon, color = hex-code
-
-
 
 // GENERATING RANDOM COLOR
 $('.generate-button').on('click', updateRandomColors)
