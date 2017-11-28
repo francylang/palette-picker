@@ -11,8 +11,7 @@ const generateRandomColor = () => {
 
 const updateRandomColors = (i) => {
   for (var i = 0; i < 6; i++) {
-
-  if(!$(`.color${i}`).hasClass('unlocked-icon')) {
+  if(!$(`.color${i}`).hasClass('locked')) {
     let color = generateRandomColor()
     $(`.color${i}`).css('background-color', color);
     $(`.code${i}`).text(color)
@@ -21,17 +20,22 @@ const updateRandomColors = (i) => {
  };
 };
 
+
+// GENERATE RANDOM COLOR ON PAGE LOAD
 $(document).ready(() => {
   updateRandomColors();
 });
 
 // TOGGLE LOCKED and UNLOCKED
+// FREEZE COLOR ON LOCK
 $('.color-container').on('click', '.unlocked-icon', (e) => {
   $(e.target).toggleClass('locked-icon')
-  console.log(e.target);
+  console.log($(e.target).parents('.color').toggleClass('locked'));
 })
 
-// FREEZE COLOR ON LOCK
+
+// if locked-icon, color = hex-code
+
 
 
 // GENERATING RANDOM COLOR
