@@ -8,9 +8,6 @@ const generateRandomColor = () => {
   return color;
 };
 
-$(document).ready(() => {
-  updateRandomColors();
-});
 
 const updateRandomColors = (i) => {
   for (var i = 0; i < 6; i++) {
@@ -23,5 +20,14 @@ const updateRandomColors = (i) => {
  };
 };
 
+$(document).ready(() => {
+  updateRandomColors();
+});
 
+// TOGGLE LOCKED and UNLOCKED
+$('.color-container').on('click', '.unlocked-image', (e) => {
+  $(e.target).toggleClass('locked-image')
+})
+
+// GENERATING RANDOM COLOR
 $('.generate-button').on('click', updateRandomColors)

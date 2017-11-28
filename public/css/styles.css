@@ -119,6 +119,15 @@ aside {
   cursor: pointer;
 }
 
+.locked-image {
+  width: 50px;
+  height: 50px;
+  background-image: url('../assets/locked.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
+
 .hex-code {
   color: #fff;
   font-size: 36px;
