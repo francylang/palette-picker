@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const path = require('path');
+const bodyParser = require('body-parser');
 
 // TELLING BROWSER HOW TO PARSE THE BODY WHEN POSTING
 app.use(bodyParser.json());
