@@ -1,19 +1,25 @@
 const express = require('express');
 const app = express();
+const path = require('path');
+
 const bodyParser = require('body-parser');
-
-app.set('port', process.env.PORT || 3000);
-// TELLING BROWSER HOW TO PARSE THE BODY WHEN POSTING
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// USING THE STATIC METHOD TO TELL US THAT WE ARE GOING THROUGH
-//PUBLIC FOLDER TO GET EVERYTHING
-app.use(express.static(__dirname + '/public'));
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
+
+// TELLING BROWSER HOW TO PARSE THE BODY WHEN POSTING
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+app.set('port', process.env.PORT || 3000);
+app.locals.title = 'Palette Picker';
+
+
+// USING THE STATIC METHOD TO TELL US THAT WE ARE GOING THROUGH
+//PUBLIC FOLDER TO GET EVERYTHING
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (request, response) => {
   response.send('Welcome to Palette Picker');
@@ -84,20 +90,6 @@ app.get('/api/v1/projects/:id', (request, response) => {
       return response.status(500).json({ error });
     });
 });
-// DELETE palette
-// IF ID DOESNT MATCH:
-// response.status(404).({ error: 'no matching palettes' })
-// IF ID DOES MATCH:
-// response.sendStatus(204)
-
-
-// CREATE A NEW PROJECT
-// if (!project) {
-// return response.status(422).send({
-// error: 'no project property provided' }
-//});
-// else - push into an array, and:
-// return response.status(201).json({ id, project })
 
 app.post('/api/v1/projects', (request, response) => {
   const project = request.body;
@@ -123,14 +115,20 @@ app.post('/api/v1/projects/:id/palettes', (request, response) => {
   let palette = request.body;
   const projectId = request.params.id;
 
-  for (let requiredParameter of ['palette_title', 'hex_code_1', 'hex_code_2', 'hex_code_3', 'hex_code_4', 'hex_code_5']) {
+  for (let requiredParameter of [
+    'palette_title',
+    'hex_code_1',
+    'hex_code_2',
+    'hex_code_3',
+    'hex_code_4',
+    'hex_code_5'
+  ]) {
     if (!palette[requiredParameter]) {
       return response.status(422).json({
         error: `You are missing the ${requiredParameter} property.`
       });
     }
   }
-
   palette = Object.assign({}, palette, { project_id: projectId });
 
   database('palettes').insert(palette, 'id')
@@ -143,8 +141,23 @@ app.post('/api/v1/projects/:id/palettes', (request, response) => {
 });
 
 
+app.delete('/api/v1/palettes/:id', (request, response) => {
+  const { id } = request.params;
+
+  database('palettes').where({ id }).del()
+    .then(palette => {
+      if (palette) {
+        return response.sendStatus(204);
+      } else {
+        return response.status(422).json({ error: 'Not Found' });
+      }
+    })
+    .catch(error => {
+      return response.status(500).json({ error });
+    });
+});
 
 
 app.listen(app.get('port'), () => {
-  console.log(`${app.locals.title} is running on ${app.get('port')}.`)
+  console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
