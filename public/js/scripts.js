@@ -103,7 +103,7 @@ const postProject = () => {
     .then(project => appendProject(project))
     .catch(error => console.log(error));
 
-   $('.new-project-title').val('');
+  $('.new-project-title').val('');
 };
 
 const postPalette = () => {
@@ -140,9 +140,6 @@ const deletePalette = (eventTarget) => {
 
   $(eventTarget).closest('.palette').remove();
 };
-
-
-
 
 $('.color-container').on('click', '.unlocked-icon', (event) => {
   $(event.target).toggleClass('locked-icon');

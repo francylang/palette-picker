@@ -1,21 +1,38 @@
+// eslint-disable max-len
+
+
+// REQUIRE express -
+// library on top of node that makes it easier to read, write, and maintain node.js
 const express = require('express');
+
+// REQUIRE body-parser - makes it possible for posts to be read by the server
 const bodyParser = require('body-parser');
+
+//EXPRESS - initiate app
 const app = express();
 
-// TELLING BROWSER HOW TO PARSE THE BODY WHEN POSTING
+// ENV -
+//sets the environemnt to node environment if it is declared with process.env, otherwise defaults to to development
+const environment = process.env.NODE_ENV || 'development';
+
+// REQUIRE - applies knexfile to the current environment
+const configuration = require('./knexfile')[environment];
+
+// REQUIRE - initiates a database and brings in knex to the configured environment
+const database = require('knex')(configuration);
+
+// MIDDLEWARE - tells the browser to expect json and parse the body when posting
 app.use(bodyParser.json());
+// MIDDLEWARE - tells the browser to parse the urlencoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const path = require('path');
 
-const environment = process.env.NODE_ENV || 'development';
-const configuration = require('./knexfile')[environment];
-const database = require('knex')(configuration);
-
-
-
+// SET - the port environment to the cariable port or default to port 3000
 app.set('port', process.env.PORT || 3000);
+// SET - title of the app
 app.locals.title = 'Palette Picker';
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (request, response) => {
