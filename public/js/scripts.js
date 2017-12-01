@@ -12,7 +12,7 @@ const generateRandomColor = () => {
   return color;
 };
 
-const updateRandomColors = (i) => {
+const updateRandomColors = () => {
   for (let i = 0; i < 6; i++) {
     if (!$(`.color${i}`).hasClass('locked')) {
       let color = generateRandomColor();
@@ -50,14 +50,19 @@ const fetchAllProjects = () => {
       appendProject(storedProjects);
       fetchPalettes(storedProjects);
     })
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
 const appendPalettes = (palettes) => {
   palettes.forEach((palette) => {
+    /*eslint-disable max-len*/
     $(`.project-${palette.project_id}`).append(`
-      <div id="palette-${palette.id}"class="palette" data-id="${palette.id}"
-        data-colors='${JSON.stringify([palette.hex_code_1, palette.hex_code_2, palette.hex_code_3, palette.hex_code_4, palette.hex_code_5] )}'>
+      <div id="palette-${palette.id}"
+           class="palette"
+           data-id="${palette.id}"
+           data-colors=
+           '${JSON.stringify([palette.hex_code_1,  palette.hex_code_2, palette.hex_code_3, palette.hex_code_4, palette.hex_code_5])}'>
         <div class="saved-palette-colors">
           <div class="palette-title" contenteditable="true">
             ${palette.palette_title}
@@ -91,8 +96,9 @@ const fetchPalettes = (projects) => {
     fetch(`/api/v1/projects/${project.id}/palettes`)
       .then(response => response.json())
       .then(palettes => appendPalettes(palettes));
-  });
-  // .catch(error => console.log(error));
+  })
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
 };
 
 const postProject = () => {
@@ -107,6 +113,7 @@ const postProject = () => {
   })
     .then(response => response.json())
     .then(project => appendProject(project))
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 
   $('.new-project-title').val('');
@@ -134,6 +141,7 @@ const postPalette = () => {
   })
     .then(response => response.json())
     .then(palette => appendPalettes(palette))
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
@@ -143,26 +151,37 @@ const deletePalette = (eventTarget) => {
   fetch(`/api/v1/palettes/${paletteId}`, {
     method: 'DELETE'
   })
+  //eslint-disable-next-line
     .catch(error => console.log(error));
 
   $(eventTarget).closest('.palette').remove();
 };
 
 const updateAsidePalette = () => {
-  const colorSwatches = JSON.parse($(event.target).closest('.palette').attr('data-colors'));
+  const colorSwatches = JSON.parse($(event.target)
+    .closest('.palette')
+    .attr('data-colors'));
+
   colorSwatches.forEach((color, index) => {
     $(`.color${index}`).css('background-color', color);
   });
 };
-
 
 $('.color-container').on('click', '.unlocked-icon', (event) => {
   $(event.target).toggleClass('locked-icon');
   $(event.target).parents('.color').toggleClass('locked');
 });
 
+$('.projects-palettes-container')
+  .on('click', '.swatch-container',
+    (event => updateAsidePalette(event.target)));
+
+$('.projects-palettes-container')
+  .on('click', '.delete-palette-button',
+    (event => deletePalette(event.target)));
+
 $('.generate-button').on('click', updateRandomColors);
+
 $('.new-project-save-button').on('click', postProject);
+
 $('.new-palette-save-button').on('click', postPalette);
-$('.projects-palettes-container').on('click', '.delete-palette-button', (event => deletePalette(event.target)));
-$('.projects-palettes-container').on('click', '.swatch-container', (event => updateAsidePalette(event.target)));
