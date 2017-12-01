@@ -40,13 +40,13 @@ const appendProject = (projects) => {
         </h3>
       </div>`);
   });
+  appendProjectName(projects)
 };
 
 const fetchAllProjects = () => {
   fetch('/api/v1/projects')
     .then(response => response.json())
     .then((storedProjects) => {
-      appendProjectName(storedProjects);
       appendProject(storedProjects);
       // displayProjects(projects);
       fetchPalettes(storedProjects);
@@ -76,6 +76,7 @@ const appendPalettes = (palettes) => {
   });
 };
 
+
 const fetchPalettes = (projects) => {
   projects.forEach((project) => {
     fetch(`/api/v1/projects/${project.id}/palettes`)
@@ -103,7 +104,7 @@ const postProject = () => {
 
 const postPalette = () => {
   const newPalette = {
-    palette_title: $('.new-project-title').val(),
+    palette_title: $('.new-palette-name').val(),
     hex_code_1: $('.code1').css('background-color'),
     hex_code_2: $('.code2').css('background-color'),
     hex_code_3: $('.code3').css('background-color'),
