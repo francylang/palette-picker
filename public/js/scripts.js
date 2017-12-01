@@ -54,6 +54,17 @@ const fetchAllProjects = () => {
     .catch(error => console.log(error));
 };
 
+// const noRepeatTitles = () => {
+//   fetch('/api/v1/projects')
+//     .then(response => response.json())
+//     .then((storedProjects) => {
+//       appendProject(storedProjects);
+//       fetchPalettes(storedProjects);
+//     })
+//     //eslint-disable-next-line
+//     .catch(error => console.log(error));
+// };
+
 const appendPalettes = (palettes) => {
   palettes.forEach((palette) => {
     /*eslint-disable max-len*/
