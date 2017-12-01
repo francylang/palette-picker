@@ -50,14 +50,19 @@ const fetchAllProjects = () => {
       appendProject(storedProjects);
       fetchPalettes(storedProjects);
     })
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
 const appendPalettes = (palettes) => {
   palettes.forEach((palette) => {
+    /*eslint-disable max-len*/
     $(`.project-${palette.project_id}`).append(`
-      <div id="palette-${palette.id}"class="palette" data-id="${palette.id}"
-        data-colors='${JSON.stringify([palette.hex_code_1, palette.hex_code_2, palette.hex_code_3, palette.hex_code_4, palette.hex_code_5] )}'>
+      <div id="palette-${palette.id}"
+           class="palette"
+           data-id="${palette.id}"
+           data-colors=
+           '${JSON.stringify([palette.hex_code_1,  palette.hex_code_2, palette.hex_code_3, palette.hex_code_4, palette.hex_code_5])}'>
         <div class="saved-palette-colors">
           <div class="palette-title" contenteditable="true">
             ${palette.palette_title}
@@ -92,6 +97,7 @@ const fetchPalettes = (projects) => {
       .then(response => response.json())
       .then(palettes => appendPalettes(palettes));
   })
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
@@ -107,6 +113,7 @@ const postProject = () => {
   })
     .then(response => response.json())
     .then(project => appendProject(project))
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 
   $('.new-project-title').val('');
@@ -134,6 +141,7 @@ const postPalette = () => {
   })
     .then(response => response.json())
     .then(palette => appendPalettes(palette))
+    //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
@@ -143,6 +151,7 @@ const deletePalette = (eventTarget) => {
   fetch(`/api/v1/palettes/${paletteId}`, {
     method: 'DELETE'
   })
+  //eslint-disable-next-line
     .catch(error => console.log(error));
 
   $(eventTarget).closest('.palette').remove();
