@@ -10,21 +10,27 @@ exports.seed = function(knex, Promise) {
         }, 'id')
           .then(project => {
             return knex('palettes').insert([
-              { palette_title: 'Rainbow',
+              {
+                id: 1,
+                palette_title: 'Rainbow',
                 hex_code_1: '#FFBE0B',
                 hex_code_2: '#FB5607',
                 hex_code_3: '#FF006E',
                 hex_code_4: '#8338EC',
                 hex_code_5: '#3A86FF',
                 project_id: project[0] },
-              { palette_title: 'Climbing',
+              {
+                id: 2,
+                palette_title: 'Climbing',
                 hex_code_1: '#002626',
                 hex_code_2: '#0E4749',
                 hex_code_3: '#95C623',
                 hex_code_4: '#E55812',
                 hex_code_5: '#EFE7DA',
                 project_id: project[0] },
-              { palette_title: 'Bluetiful',
+              {
+                id: 3,
+                palette_title: 'Bluetiful',
                 hex_code_1: '#BEE9E8',
                 hex_code_2: '#62B6CB',
                 hex_code_3: '#1B4965',
