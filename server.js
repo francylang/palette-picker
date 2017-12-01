@@ -1,5 +1,4 @@
-// eslint-disable max-len
-
+/*eslint-disable max-len*/
 
 // REQUIRE express -
 // library on top of node that makes it easier to read, write, and maintain node.js
@@ -58,7 +57,8 @@ app.get('/api/v1/projects/:id', (request, response) => {
       if (project.length) {
         return response.status(200).json(project);
       }
-      return response.status(404).json({ error: `Could not locate project with id: ${id}` });
+      return response.status(404)
+        .json({ error: `Could not locate project with id: ${id}` });
     })
     .catch((error) => {
       return response.status(500).json({ error });
@@ -90,10 +90,6 @@ app.get('/api/v1/palettes/:id', (request, response) => {
       if (palette.length) {
         return response.status(200).json(palette);
       }
-      // return response.status(404).json({
-      //   error: `Unable to find palette with id :${id}`
-      //
-      // })
     })
     .catch(error => {
       return response.status(500).json({ error });
