@@ -144,6 +144,9 @@ aside {
   font-size: 36px;
 }
 
+.new-projects {
+  display: flex;
+}
 .swatch-container {
   display: flex;
   /*flex-direction: column;*/

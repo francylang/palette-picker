@@ -55,11 +55,11 @@ app.get('/api/v1/projects/:id/palettes', (request, response) => {
     .then(palettes => {
       if (palettes.length) {
         return response.status(200).json(palettes);
+      } else {
+        return response.status(200).json([]);
       }
-      return response.status(404).json({
-        error: `Unable to retrieve project with id: ${id}`
-      });
     })
+
     .then(error => {
       return response.status(500).json({ error });
     });
@@ -73,9 +73,10 @@ app.get('/api/v1/palettes/:id', (request, response) => {
       if (palette.length) {
         return response.status(200).json(palette);
       }
-      return response.status(404).json({
-        error: `Unable to find palette with id :${id}`
-      });
+      // return response.status(404).json({
+      //   error: `Unable to find palette with id :${id}`
+      //
+      // })
     })
     .catch(error => {
       return response.status(500).json({ error });
@@ -151,6 +152,7 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
 
 
 app.listen(app.get('port'), () => {
+  // eslint-disable-next-line no-console
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
 
