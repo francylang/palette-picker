@@ -19,6 +19,11 @@
   },
   "homepage": "https://github.com/francylang/palette-picker#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "babel-eslint": "^8.0.2",
+    "body-parser": "^1.18.2",
+    "eslint": "^4.12.0",
+    "express": "^4.16.2",
+    "knex": "^0.14.2",
+    "pg": "^7.4.0"
   }
 }
