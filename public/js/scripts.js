@@ -12,7 +12,7 @@ const generateRandomColor = () => {
   return color;
 };
 
-const updateRandomColors = (i) => {
+const updateRandomColors = () => {
   for (let i = 0; i < 6; i++) {
     if (!$(`.color${i}`).hasClass('locked')) {
       let color = generateRandomColor();
@@ -91,8 +91,8 @@ const fetchPalettes = (projects) => {
     fetch(`/api/v1/projects/${project.id}/palettes`)
       .then(response => response.json())
       .then(palettes => appendPalettes(palettes));
-  });
-  // .catch(error => console.log(error));
+  })
+    .catch(error => console.log(error));
 };
 
 const postProject = () => {
@@ -149,20 +149,30 @@ const deletePalette = (eventTarget) => {
 };
 
 const updateAsidePalette = () => {
-  const colorSwatches = JSON.parse($(event.target).closest('.palette').attr('data-colors'));
+  const colorSwatches = JSON.parse($(event.target)
+    .closest('.palette')
+    .attr('data-colors'));
+
   colorSwatches.forEach((color, index) => {
     $(`.color${index}`).css('background-color', color);
   });
 };
-
 
 $('.color-container').on('click', '.unlocked-icon', (event) => {
   $(event.target).toggleClass('locked-icon');
   $(event.target).parents('.color').toggleClass('locked');
 });
 
+$('.projects-palettes-container')
+  .on('click', '.swatch-container',
+    (event => updateAsidePalette(event.target)));
+
+$('.projects-palettes-container')
+  .on('click', '.delete-palette-button',
+    (event => deletePalette(event.target)));
+
 $('.generate-button').on('click', updateRandomColors);
+
 $('.new-project-save-button').on('click', postProject);
+
 $('.new-palette-save-button').on('click', postPalette);
-$('.projects-palettes-container').on('click', '.delete-palette-button', (event => deletePalette(event.target)));
-$('.projects-palettes-container').on('click', '.swatch-container', (event => updateAsidePalette(event.target)));
