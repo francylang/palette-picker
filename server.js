@@ -136,14 +136,15 @@ app.post('/api/v1/projects/:id/palettes', (request, response) => {
 app.delete('/api/v1/palettes/:id', (request, response) => {
   const { id } = request.params;
 
-  database('palettes').where('id', id).del()
-    .then((confirmation) => {
-      if (!confirmation) {
-        return response.status(422).json({ error: 'That resource does not appear to exist to be deleted.' });
+  database('palettes').where({ id }).del()
+    .then(palette => {
+      if (palette) {
+        return response.sendStatus(204);
+      } else {
+        return response.status(422).json({ error: 'Not Found' });
       }
-      return response.sendStatus(204);
     })
-    .catch((error) => {
+    .catch(error => {
       return response.status(500).json({ error });
     });
 });

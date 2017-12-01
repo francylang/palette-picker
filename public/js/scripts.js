@@ -22,7 +22,7 @@ const updateRandomColors = (i) => {
   }
 };
 
-const appendProjectSelector = (projects) => {
+const appendProjectName = (projects) => {
   projects.forEach((project) => {
     $('.new-palette-drop-down')
       .append(`<option value=${project.id} selected>
@@ -46,7 +46,7 @@ const fetchAllProjects = () => {
   fetch('/api/v1/projects')
     .then(response => response.json())
     .then((storedProjects) => {
-      appendProjectSelector(storedProjects);
+      appendProjectName(storedProjects);
       appendProject(storedProjects);
       // displayProjects(projects);
       fetchPalettes(storedProjects);
@@ -54,44 +54,23 @@ const fetchAllProjects = () => {
     .catch(error => console.log(error));
 };
 
-// const appendProject = (project) => {
-//   const projectAppend = `<article class="project-info">
-//                     <h2>${project.project_title}</h2>
-//                   </article>`;
-//   const projectTitleDropDown = `<option value=${project.id} selected>
-//                                   ${project.project_title}
-//                                 </option>`;
-//   $('.new-project-title').val('');
-//   $('.new-projects').prepend(projectAppend);
-//   $('.new-palette-drop-down').prepend(projectTitleDropDown);
-// };
-
-
-// const displayProjects = (projects) => {
-//   projects.forEach( (project) => {
-//     $('.projects-palettes-container').append(`
-//         <div class='project ${project.id}'>
-//           <h2>${project.project_title}</h2>
-//         </div>
-//       `);
-//   });
-// };
-
 const appendPalettes = (palettes) => {
+  console.log(palettes);
   palettes.forEach((palette) => {
-    $(`.project-${palette.projectId}`).append(`
+    console.log(palette);
+    $(`.project-${palette.project_id}`).append(`
       <div id="palette-${palette.id}"class="palette" data-id="${palette.id}">
         <div class="saved-palette-colors">
           <div class="palette-title" contenteditable="true">${palette.palette_title}</div>
-          <div class="small-color-container">
-          <div class="small-palette-color small-palette-left" style="background-color: ${palette.hex_code_1}"></div>
-          <div class="small-palette-color" style="background-color: ${palette.hex_code_2}"></div>
-          <div class="small-palette-color" style="background-color: ${palette.hex_code_3}"></div>
-          <div class="small-palette-color" style="background-color: ${palette.hex_code_4}"></div>
-          <div class="small-palette-color small-palette-right" style="background-color: ${palette.hex_code_5}"></div>
+          <div class="swatch-container">
+          <div class="palette-swatch swatch1" style="background-color: ${palette.hex_code_1}"></div>
+          <div class="palette-swatch swatch2" style="background-color: ${palette.hex_code_2}"></div>
+          <div class="palette-swatch swatch3" style="background-color: ${palette.hex_code_3}"></div>
+          <div class="palette-swatch swatch4" style="background-color: ${palette.hex_code_4}"></div>
+          <div class="palette-swatch swatch5" style="background-color: ${palette.hex_code_5}"></div>
+          <button class="remove-palette-button">#</button>
         </div>
         </div>
-        <button class="remove-palette-button">X</button>
       </div>
     `);
   });
