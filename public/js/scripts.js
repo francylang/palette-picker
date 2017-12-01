@@ -105,11 +105,11 @@ const postProject = () => {
 const postPalette = () => {
   const newPalette = {
     palette_title: $('.new-palette-name').val(),
-    hex_code_1: $('.code1').css('background-color'),
-    hex_code_2: $('.code2').css('background-color'),
-    hex_code_3: $('.code3').css('background-color'),
-    hex_code_4: $('.code4').css('background-color'),
-    hex_code_5: $('.code5').css('background-color')
+    hex_code_1: $('.code1').text(),
+    hex_code_2: $('.code2').text(),
+    hex_code_3: $('.code3').text(),
+    hex_code_4: $('.code4').text(),
+    hex_code_5: $('.code5').text()
   };
   const projectId = $('.new-palette-drop-down').find('option:selected').prop('value');
 
