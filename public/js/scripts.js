@@ -22,9 +22,55 @@ const updateRandomColors = () => {
   }
 };
 
+const updateAsidePalette = () => {
+  const colorSwatches = JSON.parse($(event.target));
+  const colorPalettes = colorSwatches.closest('.palette').attr('data-colors');
+  colorPalettes.forEach((color, index) => {
+    $(`.color${index}`).css('background-color', color);
+  });
+};
+
 const toggleLocked = () => {
   $(event.target).toggleClass('locked-icon');
   $(event.target).parents('.color').toggleClass('locked');
+};
+
+const fetchAllProjects = () => {
+  fetch('/api/v1/projects')
+    .then(response => response.json())
+    .then((storedProjects) => {
+      appendProject(storedProjects);
+      fetchPalettes(storedProjects);
+    })
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
+};
+
+const fetchPalettes = (projects) => {
+  projects.forEach((project) => {
+    projectPalettesToFetch(project);
+  })
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
+};
+
+const projectPalettesToFetch = (project) => {
+  fetch(`/api/v1/projects/${project.id}/palettes`)
+    .then(response => response.json())
+    .then(palettes => appendPalettes(palettes));
+};
+
+const appendProject = (projects) => {
+  projects.forEach((project) => {
+    projectToAppend(project);
+    projectTitleToAppend(project);
+  });
+};
+
+const appendPalettes = (palettes) => {
+  palettes.forEach((palette) => {
+    paletteToAppend(palette);
+  });
 };
 
 const projectToAppend = (project) => {
@@ -45,24 +91,6 @@ const projectTitleToAppend = (project) => {
       ${project.project_title}
     </option>`
   );
-};
-
-const appendProject = (projects) => {
-  projects.forEach((project) => {
-    projectToAppend(project);
-    projectTitleToAppend(project);
-  });
-};
-
-const fetchAllProjects = () => {
-  fetch('/api/v1/projects')
-    .then(response => response.json())
-    .then((storedProjects) => {
-      appendProject(storedProjects);
-      fetchPalettes(storedProjects);
-    })
-    //eslint-disable-next-line
-    .catch(error => console.log(error));
 };
 
 const paletteToAppend = (palette) => {
@@ -103,50 +131,7 @@ const paletteToAppend = (palette) => {
   );
 };
 
-const appendPalettes = (palettes) => {
-  palettes.forEach((palette) => {
-    paletteToAppend(palette);
-  });
-};
-
-const projectPalettesToFetch = (project) => {
-  fetch(`/api/v1/projects/${project.id}/palettes`)
-    .then(response => response.json())
-    .then(palettes => appendPalettes(palettes));
-};
-
-const fetchPalettes = (projects) => {
-  projects.forEach((project) => {
-    projectPalettesToFetch(project);
-  })
-    //eslint-disable-next-line
-    .catch(error => console.log(error));
-};
-
-const fetchPostForProject = () => {
-  const projectTitle = $('.new-project-title').val();
-
-  fetch('/api/v1/projects', {
-    method: 'POST',
-    body: JSON.stringify({ project_title: projectTitle }),
-    headers: { 'Content-Type': 'application/json' },
-  })
-    .then(response => response.json())
-    .then(project => appendProject(project))
-    //eslint-disable-next-line
-    .catch(error => console.log(error));
-};
-
-const postProject = () => {
-  fetchPostForProject();
-  $('.new-project-title').val('');
-};
-
-const duplicateMessage = (projectTitle) => {
-  $('.duplicate-message').append(`<h4>The project title "${projectTitle}" already exists</h4>`);
-};
-
-const checkProjectTitle = () => {
+const checkForDuplicateProjects = () => {
   const projectTitle = $('.new-project-title').val();
 
   fetch('/api/v1/projects')
@@ -158,15 +143,30 @@ const checkProjectTitle = () => {
       return currentProjects;
     })
     .then(duplicate => {
-      if (duplicate) {
-        duplicateMessage(projectTitle)
-        $('.new-project-title').val('');
-      } else {
-        postProject(event);
-      }
+      duplicate ? duplicateMessage(projectTitle) : postProject(event);
     })
     //eslint-disable-next-line
     .catch(error => console.log(error));
+};
+
+const postProject = () => {
+  const projectTitle = $('.new-project-title').val();
+
+  fetch('/api/v1/projects', {
+    method: 'POST',
+    body: JSON.stringify({ project_title: projectTitle }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then(response => response.json())
+    .then(project => appendProject(project))
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
+  $('.new-project-title').val('');
+};
+
+const duplicateMessage = (projectTitle) => {
+  alert(`The project "${projectTitle}" already exists`);
+  $('.new-project-title').val('');
 };
 
 const postPalette = () => {
@@ -201,22 +201,12 @@ const deletePalette = (eventTarget) => {
   })
   //eslint-disable-next-line
     .catch(error => console.log(error));
-
   $(eventTarget).closest('.palette').remove();
-};
-
-const updateAsidePalette = () => {
-  const colorSwatches = JSON.parse($(event.target));
-  const colorPalettes = colorSwatches.closest('.palette').attr('data-colors');
-
-  colorPalettes.forEach((color, index) => {
-    $(`.color${index}`).css('background-color', color);
-  });
 };
 
 $('.generate-button').on('click', updateRandomColors);
 
-$('.new-project-save-button').on('click', checkProjectTitle);
+$('.new-project-save-button').on('click', checkForDuplicateProjects);
 
 $('.new-palette-save-button').on('click', postPalette);
 
