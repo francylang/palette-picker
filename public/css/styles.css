@@ -141,6 +141,10 @@ aside {
   font-size: 36px;
 }
 
+.duplicate-message {
+  color: red;
+}
+
 .new-projects {
   display: flex;
   flex-wrap: wrap;
@@ -150,6 +154,7 @@ aside {
 .project {
   margin-left: 20px;
 }
+
 .swatch-container {
   display: flex;
   flex-wrap: wrap;

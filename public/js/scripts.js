@@ -109,7 +109,7 @@ const appendPalettes = (palettes) => {
   });
 };
 
-const projectPaletteToFetch = (project) => {
+const projectPalettesToFetch = (project) => {
   fetch(`/api/v1/projects/${project.id}/palettes`)
     .then(response => response.json())
     .then(palettes => appendPalettes(palettes));
@@ -117,13 +117,13 @@ const projectPaletteToFetch = (project) => {
 
 const fetchPalettes = (projects) => {
   projects.forEach((project) => {
-    projectPaletteToFetch(project);
+    projectPalettesToFetch(project);
   })
     //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
-const fetchPostProject = () => {
+const fetchPostForProject = () => {
   const projectTitle = $('.new-project-title').val();
 
   fetch('/api/v1/projects', {
@@ -138,8 +138,35 @@ const fetchPostProject = () => {
 };
 
 const postProject = () => {
-  fetchPostProject();
+  fetchPostForProject();
   $('.new-project-title').val('');
+};
+
+const duplicateMessage = (projectTitle) => {
+  $('.duplicate-message').append(`<h4>The project title "${projectTitle}" already exists</h4>`);
+};
+
+const checkProjectTitle = () => {
+  const projectTitle = $('.new-project-title').val();
+
+  fetch('/api/v1/projects')
+    .then(projects => projects.json())
+    .then(existingProjects => {
+      const currentProjects = existingProjects.find(project => {
+        return project.project_title === projectTitle;
+      });
+      return currentProjects;
+    })
+    .then(duplicate => {
+      if (duplicate) {
+        duplicateMessage(projectTitle)
+        $('.new-project-title').val('');
+      } else {
+        postProject(event);
+      }
+    })
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
 };
 
 const postPalette = () => {
@@ -187,15 +214,16 @@ const updateAsidePalette = () => {
   });
 };
 
-$('.projects-palettes-container')
-  .on('click', '.swatch-container',
-    (event => updateAsidePalette(event.target)));
-
-$('.projects-palettes-container')
-  .on('click', '.delete-palette-button',
-    (event => deletePalette(event.target)));
-
 $('.generate-button').on('click', updateRandomColors);
-$('.new-project-save-button').on('click', postProject);
+
+$('.new-project-save-button').on('click', checkProjectTitle);
+
 $('.new-palette-save-button').on('click', postPalette);
+
 $('.color-container').on('click', '.unlocked-icon', toggleLocked);
+
+$('.projects-palettes-container').on('click', '.swatch-container',
+  (event => updateAsidePalette(event.target)));
+
+$('.projects-palettes-container').on('click', '.delete-palette-button',
+  (event => deletePalette(event.target)));
