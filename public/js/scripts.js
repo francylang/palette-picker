@@ -22,25 +22,36 @@ const updateRandomColors = () => {
   }
 };
 
-const appendProjectName = (projects) => {
-  projects.forEach((project) => {
-    $('.new-palette-drop-down')
-      .append(`<option value=${project.id} selected>
+const toggleLocked = () => {
+  $(event.target).toggleClass('locked-icon');
+  $(event.target).parents('.color').toggleClass('locked');
+};
+
+const projectToAppend = (project) => {
+  $('.new-projects').append(
+    `<div id="project-template"
+          class="project project-${project.id}">
+      <h3 class="project-name"
+          contenteditable="true">
         ${project.project_title}
-      </option>`);
-  });
+      </h3>
+    </div>`
+  );
+};
+
+const projectTitleToAppend = (project) => {
+  $('.new-palette-drop-down').append(
+    `<option value=${project.id} selected>
+      ${project.project_title}
+    </option>`
+  );
 };
 
 const appendProject = (projects) => {
   projects.forEach((project) => {
-    $('.new-projects')
-      .append(`<div id="project-template" class="project project-${project.id}">
-        <h3 class="project-name" contenteditable="true">
-          ${project.project_title}
-        </h3>
-      </div>`);
+    projectToAppend(project);
+    projectTitleToAppend(project);
   });
-  appendProjectName(projects);
 };
 
 const fetchAllProjects = () => {
@@ -54,79 +65,80 @@ const fetchAllProjects = () => {
     .catch(error => console.log(error));
 };
 
-// const noRepeatTitles = () => {
-//   fetch('/api/v1/projects')
-//     .then(response => response.json())
-//     .then((storedProjects) => {
-//       appendProject(storedProjects);
-//       fetchPalettes(storedProjects);
-//     })
-//     //eslint-disable-next-line
-//     .catch(error => console.log(error));
-// };
+const paletteToAppend = (palette) => {
+  const {
+    palette_title,
+    hex_code_1,
+    hex_code_2,
+    hex_code_3,
+    hex_code_4,
+    hex_code_5 } = palette;
+  $(`.project-${palette.project_id}`).append(
+    ` <div id="palette-${palette.id}"
+         class="palette"
+         data-id="${palette.id}"
+         data-colors='${JSON.stringify([palette])}'>
+      <div class="saved-palette-colors">
+       <div class="palette-title" contenteditable="true">${palette_title}</div>
+        <div class="swatch-container">
+          <div class="palette-swatch swatch1"
+               style="background-color: ${hex_code_1}">
+          </div>
+          <div class="palette-swatch swatch2"
+               style="background-color: ${hex_code_2}">
+          </div>
+          <div class="palette-swatch swatch3"
+               style="background-color: ${hex_code_3}">
+          </div>
+          <div class="palette-swatch swatch4"
+               style="background-color: ${hex_code_4}">
+          </div>
+          <div class="palette-swatch swatch5"
+               style="background-color: ${hex_code_5}">
+          </div>
+          <button class="delete-palette-button">X</button>
+       </div>
+      </div>
+    </div>`
+  );
+};
 
 const appendPalettes = (palettes) => {
   palettes.forEach((palette) => {
-    /*eslint-disable max-len*/
-    $(`.project-${palette.project_id}`).append(`
-      <div id="palette-${palette.id}"
-           class="palette"
-           data-id="${palette.id}"
-           data-colors=
-           '${JSON.stringify([palette.hex_code_1,  palette.hex_code_2, palette.hex_code_3, palette.hex_code_4, palette.hex_code_5])}'>
-        <div class="saved-palette-colors">
-          <div class="palette-title" contenteditable="true">
-            ${palette.palette_title}
-          </div>
-          <div class="swatch-container">
-          <div class="palette-swatch swatch1"
-               style="background-color: ${palette.hex_code_1}">
-          </div>
-          <div class="palette-swatch swatch2"
-               style="background-color: ${palette.hex_code_2}">
-          </div>
-          <div class="palette-swatch swatch3"
-               style="background-color: ${palette.hex_code_3}">
-          </div>
-          <div class="palette-swatch swatch4"
-               style="background-color: ${palette.hex_code_4}">
-          </div>
-          <div class="palette-swatch swatch5"
-               style="background-color: ${palette.hex_code_5}">
-          </div>
-          <button class="delete-palette-button">X</button>
-        </div>
-        </div>
-      </div>
-    `);
+    paletteToAppend(palette);
   });
+};
+
+const projectPaletteToFetch = (project) => {
+  fetch(`/api/v1/projects/${project.id}/palettes`)
+    .then(response => response.json())
+    .then(palettes => appendPalettes(palettes));
 };
 
 const fetchPalettes = (projects) => {
   projects.forEach((project) => {
-    fetch(`/api/v1/projects/${project.id}/palettes`)
-      .then(response => response.json())
-      .then(palettes => appendPalettes(palettes));
+    projectPaletteToFetch(project);
   })
     //eslint-disable-next-line
     .catch(error => console.log(error));
 };
 
-const postProject = () => {
+const fetchPostProject = () => {
   const projectTitle = $('.new-project-title').val();
 
   fetch('/api/v1/projects', {
     method: 'POST',
     body: JSON.stringify({ project_title: projectTitle }),
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
   })
     .then(response => response.json())
     .then(project => appendProject(project))
     //eslint-disable-next-line
     .catch(error => console.log(error));
+};
 
+const postProject = () => {
+  fetchPostProject();
   $('.new-project-title').val('');
 };
 
@@ -146,9 +158,7 @@ const postPalette = () => {
   fetch(`/api/v1/projects/${projectId}/palettes`, {
     method: 'POST',
     body: JSON.stringify(newPalette),
-    headers: {
-      'content-type': 'application/json'
-    }
+    headers: { 'content-type': 'application/json' }
   })
     .then(response => response.json())
     .then(palette => appendPalettes(palette))
@@ -169,19 +179,13 @@ const deletePalette = (eventTarget) => {
 };
 
 const updateAsidePalette = () => {
-  const colorSwatches = JSON.parse($(event.target)
-    .closest('.palette')
-    .attr('data-colors'));
+  const colorSwatches = JSON.parse($(event.target));
+  const colorPalettes = colorSwatches.closest('.palette').attr('data-colors');
 
-  colorSwatches.forEach((color, index) => {
+  colorPalettes.forEach((color, index) => {
     $(`.color${index}`).css('background-color', color);
   });
 };
-
-$('.color-container').on('click', '.unlocked-icon', (event) => {
-  $(event.target).toggleClass('locked-icon');
-  $(event.target).parents('.color').toggleClass('locked');
-});
 
 $('.projects-palettes-container')
   .on('click', '.swatch-container',
@@ -192,7 +196,6 @@ $('.projects-palettes-container')
     (event => deletePalette(event.target)));
 
 $('.generate-button').on('click', updateRandomColors);
-
 $('.new-project-save-button').on('click', postProject);
-
 $('.new-palette-save-button').on('click', postPalette);
+$('.color-container').on('click', '.unlocked-icon', toggleLocked);

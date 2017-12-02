@@ -1,18 +1,15 @@
+/*eslint-disable max-len*/
+/*eslint-disable no-console*/
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-
-// TELLING BROWSER HOW TO PARSE THE BODY WHEN POSTING
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 const path = require('path');
-
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Palette Picker';
@@ -21,7 +18,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (request, response) => {
   response.send('Welcome to Palette Picker');
 });
-
 
 app.get('/api/v1/projects', (request, response) => {
   database('projects').select()
@@ -59,8 +55,7 @@ app.get('/api/v1/projects/:id/palettes', (request, response) => {
         return response.status(200).json([]);
       }
     })
-
-    .then(error => {
+    .catch(error => {
       return response.status(500).json({ error });
     });
 });
@@ -73,10 +68,9 @@ app.get('/api/v1/palettes/:id', (request, response) => {
       if (palette.length) {
         return response.status(200).json(palette);
       }
-      // return response.status(404).json({
-      //   error: `Unable to find palette with id :${id}`
-      //
-      // })
+      return response.status(404).json({
+        error: `Unable to find palette with id :${id}`
+      });
     })
     .catch(error => {
       return response.status(500).json({ error });
@@ -93,7 +87,6 @@ app.post('/api/v1/projects', (request, response) => {
       });
     }
   }
-
   database('projects').insert(project, '*')
     .then(project => {
       return response.status(201).json(project);
@@ -121,9 +114,7 @@ app.post('/api/v1/projects/:id/palettes', (request, response) => {
       });
     }
   }
-
   palette = Object.assign({}, palette, { project_id: id });
-
   database('palettes').insert(palette, '*')
     .then(palette => {
       return response.status(201).json(palette);
@@ -132,7 +123,6 @@ app.post('/api/v1/projects/:id/palettes', (request, response) => {
       return response.status(500).json({ error });
     });
 });
-
 
 app.delete('/api/v1/palettes/:id', (request, response) => {
   const { id } = request.params;
@@ -150,9 +140,7 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
     });
 });
 
-
 app.listen(app.get('port'), () => {
-  // eslint-disable-next-line no-console
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
 
