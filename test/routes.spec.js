@@ -66,7 +66,7 @@ describe('API Routes', () => {
           response.body[0].name.should.equal('Project 1');
           response.body[0].should.have.property('created_at');
           response.body[0].should.have.property('updated_at');
-          done();
+          // done();
         })
         .catch((error) => {
           throw error;
@@ -85,27 +85,24 @@ describe('API Routes', () => {
 
   describe('POST /api/v1/projects', () => {
 
-    // it('should be able to add a project to database', (done) => {
-    //   chai.request(server)
-    //     .post('/api/v1/projects')
-    //     .send({
-    //       id: 2,
-    //       project_title: 'project2'
-    //     })
-    //     .end((error, response) => {
-    //       response.should.have.status(201);
-    //       response.body.should.be.a('array');
-    //       response.body.should.have.property('id');
-    //       response.body.id.should.equal(2);
-    //       chai.request(server)
-    //         .get('/api/v1/projects')
-    //         .end((error, response) => {
-    //           response.body.should.be.a('array');
-    //           response.body.length.should.equal(2);
-    //           done();
-    //         });
-    //     });
-    // });
+    it('should be able to add a project to database', (done) => {
+      chai.request(server)
+        .post('/api/v1/projects')
+        .send({
+          project_title: 'project2'
+        })
+        .end((error, response) => {
+          response.should.have.status(201);
+          response.body.should.be.a('array');
+          chai.request(server)
+            .get('/api/v1/projects')
+            .end((error, response) => {
+              response.body.should.be.a('array');
+              response.body.length.should.equal(2);
+              done();
+            });
+        });
+    });
 
     it('should not create a project with missing data', (done) => {
       chai.request(server)
@@ -157,7 +154,7 @@ describe('API Routes', () => {
 
     it('should return a 404 if the path is incorrect', (done) => {
       chai.request(server)
-        .get('/api/v1/hello')
+        .get('/api/v1/wrongo')
         .end((error, response) => {
           response.should.have.status(404);
           done();
@@ -165,52 +162,52 @@ describe('API Routes', () => {
     });
   });
 
-  // describe('GET /api/v1/palettes/:id', () => {
-  //   it('should return a specific palette', () => {
-  //     chai.request(server)
-  //       .get('/api/v1/palettes/2')
-  //       .then((response) => {
-  //         response.should.have.status(200);
-          // response.should.be.json;
-          // response.body.should.be.a('array');
-          // response.body.length.should.equal(1);
-          // response.body[2].should.have.property('id');
-          // response.body[2].id.should.equal(2);
-          // response.body[2].name.should.equal('Climbing');
-          // response.body[2].should.have.property('hex_code_1');
-          // response.body[2].hex_code_1.should.equal('#002626');
-          // response.body[2].should.have.property('hex_code_2');
-          // response.body[2].hex_code_2.should.equal('#0E4749');
-          // response.body[2].should.have.property('hex_code_3');
-          // response.body[2].hex_code_3.should.equal('#95C623');
-          // response.body[2].should.have.property('hex_code_4');
-          // response.body[2].hex_code_4.should.equal('#E55812');
-          // response.body[2].should.have.property('hex_code_5');
-          // response.body[2].hex_code_5.should.equal('#EFE7DA');
-          // response.body[2].should.have.property('project_id');
-          // response.body[2].project_id.should.equal(1);
-          // response.body[2].should.have.property('created_at');
-          // response.body[2].should.have.property('updated_at');
+  describe('GET /api/v1/palettes/:id', () => {
+    it('should return a specific palette', () => {
+      chai.request(server)
+        .get('/api/v1/palettes/2')
+        .then((response) => {
+          response.should.have.status(200);
+          response.should.be.json;
+          response.body.should.be.a('array');
+          response.body.length.should.equal(1);
+          response.body[2].should.have.property('id');
+          response.body[2].id.should.equal(2);
+          response.body[2].name.should.equal('Climbing');
+          response.body[2].should.have.property('hex_code_1');
+          response.body[2].hex_code_1.should.equal('#002626');
+          response.body[2].should.have.property('hex_code_2');
+          response.body[2].hex_code_2.should.equal('#0E4749');
+          response.body[2].should.have.property('hex_code_3');
+          response.body[2].hex_code_3.should.equal('#95C623');
+          response.body[2].should.have.property('hex_code_4');
+          response.body[2].hex_code_4.should.equal('#E55812');
+          response.body[2].should.have.property('hex_code_5');
+          response.body[2].hex_code_5.should.equal('#EFE7DA');
+          response.body[2].should.have.property('project_id');
+          response.body[2].project_id.should.equal(1);
+          response.body[2].should.have.property('created_at');
+          response.body[2].should.have.property('updated_at');
           // done()
-  //       })
-  //       .catch((error) => {
-  //         throw error;
-  //       });
-  //   });
-  // });
+        })
+        .catch((error) => {
+          throw error;
+        });
+    });
+  });
 
   describe('DELETE /api/v1/palettes/:id', () => {
 
-    // it('should delete a palette from database', (done) => {
-    //   chai.request(server)
-    //     .delete('/api/v1/palettes/1')
-    //     .end((error, response) => {
-    //       response.should.have.status(204);
-    //       done();
-    //     });
-    // });
+    it('should delete a palette from database', (done) => {
+      chai.request(server)
+        .delete('/api/v1/palettes/2')
+        .end((error, response) => {
+          response.should.have.status(204);
+          done();
+        });
+    });
 
-    it('should return a 422 error if the palette is not found', (done) => {
+    it.only('should return a 422 error if the palette is not found', (done) => {
       chai.request(server)
         .delete('/api/v1/palettes/500')
         .end((error, response) => {
