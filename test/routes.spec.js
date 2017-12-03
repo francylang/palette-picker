@@ -66,7 +66,6 @@ describe('API Routes', () => {
           response.body[0].name.should.equal('Project 1');
           response.body[0].should.have.property('created_at');
           response.body[0].should.have.property('updated_at');
-          // done();
         })
         .catch((error) => {
           throw error;
@@ -110,7 +109,6 @@ describe('API Routes', () => {
           response.body[1].project_id.should.equal(1);
           response.body[1].should.have.property('created_at');
           response.body[1].should.have.property('updated_at');
-          // done();
         })
         .catch((error) => {
           throw error;
@@ -153,7 +151,6 @@ describe('API Routes', () => {
           response.body[2].project_id.should.equal(1);
           response.body[2].should.have.property('created_at');
           response.body[2].should.have.property('updated_at');
-          // done()
         })
         .catch((error) => {
           throw error;
@@ -162,7 +159,7 @@ describe('API Routes', () => {
   });
 
   describe('POST /api/v1/projects', () => {
-    it.only('should be able to add a project to database', (done) => {
+    it('should be able to add a project to database', (done) => {
       chai.request(server)
         .post('/api/v1/projects')
         .send({
@@ -192,6 +189,63 @@ describe('API Routes', () => {
         .end((error, response) => {
           response.should.have.status(422);
           done();
+        });
+    });
+  });
+
+  describe('POST /api/v1/projects/:id/palettes/', () => {
+    it('should send and add a new palette to database', () => {
+      chai.request(server)
+        .post('/api/v1/projects/1/palettes')
+        .send({
+          id: 3,
+          palette_title: 'Bluetiful',
+          hex_code_1: '#BEE9E8',
+          hex_code_2: '#62B6CB',
+          hex_code_3: '#1B4965',
+          hex_code_4: '#CAE9FF',
+          hex_code_5: '#5FA8D3',
+          project_id: 1
+        })
+        .then((response) => {
+          response.should.have.status(201);
+          response.body.should.be.a('array');
+          response.body.length.should.equal(1);
+          response.body[0].should.have.property('id');
+          response.body[0].id.should.equal(3);
+          response.body[0].should.have.property('palette_title');
+          response.body[0].name.should.equal('Bluetiful');
+
+          chai.request(server)
+            .get('/api/v1/projects/1/palettes')
+            .then((getResponse) => {
+              getResponse.should.have.status(200);
+              getResponse.should.be.json;
+              getResponse.body.should.be.a('array');
+              getResponse.body.length.should.equal(3);
+              getResponse.body[2].should.have.property('id');
+              getResponse.body[2].id.should.equal(3);
+              getResponse.body[2].should.have.property('palette_title');
+              getResponse.body[2].name.should.equal('Bluetiful');
+              getResponse.body[2].should.have.property('hex_code_1');
+              getResponse.body[2].hex_code_1.should.equal('#BEE9E8');
+              getResponse.body[2].should.have.property('hex_code_2');
+              getResponse.body[2].hex_code_2.should.equal('#62B6CB');
+              getResponse.body[2].should.have.property('hex_code_3');
+              getResponse.body[2].hex_code_3.should.equal('#1B4965');
+              getResponse.body[2].should.have.property('hex_code_4');
+              getResponse.body[2].hex_code_4.should.equal('#CAE9FF');
+              getResponse.body[2].should.have.property('hex_code_5');
+              getResponse.body[2].hex_code_5.should.equal('#5FA8D3');
+              getResponse.body[2].should.have.property('project_id');
+              getResponse.body[2].project_id.should.equal(1);
+              getResponse.body[2].should.have.property('created_at');
+              getResponse.body[2].should.have.property('updated_at');
+              // done();
+            })
+            .catch((error) => {
+              throw error;
+            });
         });
     });
   });
