@@ -22,6 +22,15 @@ const updateRandomColors = () => {
   }
 };
 
+const changeHexCode = (event) => {
+  const grabColor = $(event.target);
+  const colorText = grabColor.text();
+  const newColor = grabColor.closest('.color');
+
+  newColor.css('background-color', colorText);
+};
+$('.color-container').on('keyup', changeHexCode);
+
 const updateAsidePalette = () => {
   const colorSwatches = JSON.parse($(event.target));
   const colorPalettes = colorSwatches.closest('.palette').attr('data-colors');
@@ -43,7 +52,7 @@ const fetchAllProjects = () => {
       fetchPalettes(storedProjects);
     })
     //eslint-disable-next-line
-    .catch(error => console.log(error));
+    // .catch(error => console.log(error));
 };
 
 const fetchPalettes = (projects) => {
@@ -51,7 +60,7 @@ const fetchPalettes = (projects) => {
     projectPalettesToFetch(project);
   })
     //eslint-disable-next-line
-    .catch(error => console.log(error));
+    // .catch(error => console.log(error));
 };
 
 const projectPalettesToFetch = (project) => {
@@ -101,34 +110,24 @@ const paletteToAppend = (palette) => {
     hex_code_3,
     hex_code_4,
     hex_code_5 } = palette;
-    
+
   $(`.project-${palette.project_id}`).append(
     ` <div id="palette-${palette.id}"
-         class="palette"
-         data-id="${palette.id}"
-         data-colors='${JSON.stringify([palette])}'>
-      <div class="saved-palette-colors">
-       <div class="palette-title" contenteditable="true">${palette_title}</div>
-        <div class="swatch-container">
-          <div class="palette-swatch swatch1"
-               style="background-color: ${hex_code_1}">
-          </div>
-          <div class="palette-swatch swatch2"
-               style="background-color: ${hex_code_2}">
-          </div>
-          <div class="palette-swatch swatch3"
-               style="background-color: ${hex_code_3}">
-          </div>
-          <div class="palette-swatch swatch4"
-               style="background-color: ${hex_code_4}">
-          </div>
-          <div class="palette-swatch swatch5"
-               style="background-color: ${hex_code_5}">
-          </div>
-          <button class="delete-palette-button">X</button>
-       </div>
-      </div>
-    </div>`
+           class="palette"
+           data-id="${palette.id}"
+           data-colors='${JSON.stringify([palette])}'>
+        <div class="saved-palette-colors">
+         <div class="palette-title" contenteditable="true">${palette_title}</div>
+          <div class="swatch-container">
+            <div class="palette-swatch swatch1" style="background-color: ${hex_code_1}"></div>
+            <div class="palette-swatch swatch2" style="background-color: ${hex_code_2}"></div>
+            <div class="palette-swatch swatch3" style="background-color: ${hex_code_3}"></div>
+            <div class="palette-swatch swatch4" style="background-color: ${hex_code_4}"></div>
+            <div class="palette-swatch swatch5" style="background-color: ${hex_code_5}"></div>
+            <button class="delete-palette-button">X</button>
+         </div>
+        </div>
+      </div>`
   );
 };
 
