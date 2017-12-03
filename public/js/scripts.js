@@ -22,12 +22,12 @@ const updateRandomColors = () => {
   }
 };
 
-const updateAsidePalette = () => {
-  const colorSwatches = JSON.parse($(event.target));
-  const colorPalettes = colorSwatches.closest('.palette').attr('data-colors');
-  colorPalettes.forEach((color, index) => {
-    $(`.color${index}`).css('background-color', color);
-  });
+const changeHexCode = (event) => {
+  const grabColor = $(event.target);
+  const colorText = grabColor.text();
+  const newColor = grabColor.closest('.color');
+
+  newColor.css('background-color', colorText);
 };
 
 const toggleLocked = () => {
@@ -93,43 +93,34 @@ const projectTitleToAppend = (project) => {
   );
 };
 
-const paletteToAppend = (palette) => {
-  const {
-    palette_title,
-    hex_code_1,
-    hex_code_2,
-    hex_code_3,
-    hex_code_4,
-    hex_code_5 } = palette;
-    
-  $(`.project-${palette.project_id}`).append(
-    ` <div id="palette-${palette.id}"
-         class="palette"
-         data-id="${palette.id}"
-         data-colors='${JSON.stringify([palette])}'>
-      <div class="saved-palette-colors">
-       <div class="palette-title" contenteditable="true">${palette_title}</div>
-        <div class="swatch-container">
-          <div class="palette-swatch swatch1"
-               style="background-color: ${hex_code_1}">
-          </div>
-          <div class="palette-swatch swatch2"
-               style="background-color: ${hex_code_2}">
-          </div>
-          <div class="palette-swatch swatch3"
-               style="background-color: ${hex_code_3}">
-          </div>
-          <div class="palette-swatch swatch4"
-               style="background-color: ${hex_code_4}">
-          </div>
-          <div class="palette-swatch swatch5"
-               style="background-color: ${hex_code_5}">
-          </div>
-          <button class="delete-palette-button">X</button>
-       </div>
-      </div>
-    </div>`
+const paletteToAppend = ({ id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id}) => {
+  const asideColorPalette = [hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5];
+
+  $(`.project-${project_id}`).append(
+    ` <div id="palette-${id}"
+           class="palette"
+           data-id="${id}"
+           data-colors='${JSON.stringify(asideColorPalette)}'>
+        <div class="saved-palette-colors">
+         <div class="palette-title" contenteditable="true">${palette_title}</div>
+          <div class="swatch-container">
+            <div class="palette-swatch swatch1" style="background-color: ${hex_code_1}"></div>
+            <div class="palette-swatch swatch2" style="background-color: ${hex_code_2}"></div>
+            <div class="palette-swatch swatch3" style="background-color: ${hex_code_3}"></div>
+            <div class="palette-swatch swatch4" style="background-color: ${hex_code_4}"></div>
+            <div class="palette-swatch swatch5" style="background-color: ${hex_code_5}"></div>
+            <button class="delete-palette-button">X</button>
+         </div>
+        </div>
+      </div>`
   );
+};
+
+const updateAsidePalette = () => {
+  const colorSwatches = JSON.parse($(event.target).closest('.palette').attr('data-colors'));
+  colorSwatches.forEach((color, index) => {
+    $(`.color${index}`).css('background-color', color);
+  });
 };
 
 const checkForDuplicateProjects = () => {
@@ -205,6 +196,7 @@ const deletePalette = (eventTarget) => {
   $(eventTarget).closest('.palette').remove();
 };
 
+
 $('.generate-button').on('click', updateRandomColors);
 
 $('.new-project-save-button').on('click', checkForDuplicateProjects);
@@ -212,6 +204,8 @@ $('.new-project-save-button').on('click', checkForDuplicateProjects);
 $('.new-palette-save-button').on('click', postPalette);
 
 $('.color-container').on('click', '.unlocked-icon', toggleLocked);
+
+$('.color-container').on('keyup', changeHexCode);
 
 $('.projects-palettes-container').on('click', '.swatch-container',
   (event => updateAsidePalette(event.target)));
