@@ -101,6 +101,7 @@ const paletteToAppend = (palette) => {
     hex_code_3,
     hex_code_4,
     hex_code_5 } = palette;
+    
   $(`.project-${palette.project_id}`).append(
     ` <div id="palette-${palette.id}"
          class="palette"
