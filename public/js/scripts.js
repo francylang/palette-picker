@@ -29,15 +29,6 @@ const changeHexCode = (event) => {
 
   newColor.css('background-color', colorText);
 };
-$('.color-container').on('keyup', changeHexCode);
-
-const updateAsidePalette = () => {
-  const colorSwatches = JSON.parse($(event.target));
-  const colorPalettes = colorSwatches.closest('.palette').attr('data-colors');
-  colorPalettes.forEach((color, index) => {
-    $(`.color${index}`).css('background-color', color);
-  });
-};
 
 const toggleLocked = () => {
   $(event.target).toggleClass('locked-icon');
@@ -52,7 +43,7 @@ const fetchAllProjects = () => {
       fetchPalettes(storedProjects);
     })
     //eslint-disable-next-line
-    // .catch(error => console.log(error));
+    .catch(error => console.log(error));
 };
 
 const fetchPalettes = (projects) => {
@@ -60,7 +51,7 @@ const fetchPalettes = (projects) => {
     projectPalettesToFetch(project);
   })
     //eslint-disable-next-line
-    // .catch(error => console.log(error));
+    .catch(error => console.log(error));
 };
 
 const projectPalettesToFetch = (project) => {
@@ -102,20 +93,14 @@ const projectTitleToAppend = (project) => {
   );
 };
 
-const paletteToAppend = (palette) => {
-  const {
-    palette_title,
-    hex_code_1,
-    hex_code_2,
-    hex_code_3,
-    hex_code_4,
-    hex_code_5 } = palette;
+const paletteToAppend = ({ id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id}) => {
+  const asideColorPalette = [hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5];
 
-  $(`.project-${palette.project_id}`).append(
-    ` <div id="palette-${palette.id}"
+  $(`.project-${project_id}`).append(
+    ` <div id="palette-${id}"
            class="palette"
-           data-id="${palette.id}"
-           data-colors='${JSON.stringify([palette])}'>
+           data-id="${id}"
+           data-colors='${JSON.stringify(asideColorPalette)}'>
         <div class="saved-palette-colors">
          <div class="palette-title" contenteditable="true">${palette_title}</div>
           <div class="swatch-container">
@@ -129,6 +114,13 @@ const paletteToAppend = (palette) => {
         </div>
       </div>`
   );
+};
+
+const updateAsidePalette = () => {
+  const colorSwatches = JSON.parse($(event.target).closest('.palette').attr('data-colors'));
+  colorSwatches.forEach((color, index) => {
+    $(`.color${index}`).css('background-color', color);
+  });
 };
 
 const checkForDuplicateProjects = () => {
@@ -204,6 +196,7 @@ const deletePalette = (eventTarget) => {
   $(eventTarget).closest('.palette').remove();
 };
 
+
 $('.generate-button').on('click', updateRandomColors);
 
 $('.new-project-save-button').on('click', checkForDuplicateProjects);
@@ -211,6 +204,8 @@ $('.new-project-save-button').on('click', checkForDuplicateProjects);
 $('.new-palette-save-button').on('click', postPalette);
 
 $('.color-container').on('click', '.unlocked-icon', toggleLocked);
+
+$('.color-container').on('keyup', changeHexCode);
 
 $('.projects-palettes-container').on('click', '.swatch-container',
   (event => updateAsidePalette(event.target)));
