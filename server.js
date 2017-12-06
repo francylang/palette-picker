@@ -15,6 +15,15 @@ app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Palette Picker';
 app.use(express.static(path.join(__dirname, 'public')));
 
+const requireHTTPS = (request, response, next) => {
+  if (request.headers['x-forwarded-proto'] !== 'https') {
+    return response.redirect(`https://'${request.get('host')}$request.url`);
+  }
+  next();
+};
+
+if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
+
 app.get('/', (request, response) => {
   response.send('Welcome to Palette Picker');
 });
