@@ -223,3 +223,41 @@ h3 {
   background-color: #000;
   color: #fff;
 }
+
+@media screen and (max-width: 750px) {
+  main {
+    flex-direction: column-reverse;
+  }
+
+  h1 {
+    width: 100%;
+  }
+  .projects-palettes-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .new-palette-container {
+    margin: 35px 0;
+  }
+
+  .new-project-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .new-projects {
+    flex-wrap: nowrap;
+    margin-left: 0;
+  }
+
+  .new-project-title {
+    height: 42px;
+    width: 100%;
+  }
+
+  aside {
+    width: 110%;
+  }
+}
