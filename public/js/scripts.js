@@ -196,6 +196,20 @@ const deletePalette = (eventTarget) => {
   $(eventTarget).closest('.palette').remove();
 };
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(registration => {
+        //eslint-disable-next-line
+        console.log('ServiceWorker registration successful');
+      })
+      .catch(error => {
+        //eslint-disable-next-line
+        console.log(`ServiceWorker registration failed: ${error}`);
+      });
+  });
+}
+
 
 $('.generate-button').on('click', updateRandomColors);
 
