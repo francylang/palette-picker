@@ -224,13 +224,22 @@ h3 {
   color: #fff;
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 780px) {
   main {
     flex-direction: column-reverse;
   }
 
   h1 {
     width: 100%;
+    font-size: 55px;
+  }
+
+  .generate-button {
+    width: 70%;
+  }
+
+  .color-container {
+    margin-top: 133px;
   }
   .projects-palettes-container {
     display: flex;
@@ -239,12 +248,24 @@ h3 {
   }
 
   .new-palette-container {
-    margin: 35px 0;
+    width: auto;
+  }
+
+  .new-palette-name {
+    margin: auto;
   }
 
   .new-project-container {
     display: flex;
-    flex-direction: column;
+    width: 80%;
+    margin: 10px;
+  }
+
+  .create-new-projects-container {
+    /*justify-content: center;
+    align-items: center;
+    width: auto;
+    margin-left: 0;*/
   }
 
   .new-projects {
@@ -254,10 +275,14 @@ h3 {
 
   .new-project-title {
     height: 42px;
-    width: 100%;
+    width: 70%;
   }
 
   aside {
     width: 110%;
+  }
+
+  .new-project-save-button {
+    padding: 1px 7px;
   }
 }
