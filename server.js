@@ -2,27 +2,30 @@
 /*eslint-disable no-console*/
 const express = require('express');
 const bodyParser = require('body-parser');
+
 const app = express();
 const path = require('path');
-const environment = process.env.NODE_ENV || 'development';
-const configuration = require('./knexfile')[environment];
-const database = require('knex')(configuration);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.set('port', process.env.PORT || 3000);
-app.locals.title = 'Palette Picker';
-app.use(express.static(path.join(__dirname, 'public')));
+const environment = process.env.NODE_ENV || 'development';
+const configuration = require('./knexfile')[environment];
+const database = require('knex')(configuration);
 
-const requireHTTPS = (request, response, next) => {
+
+const httpsRedirect = (request, response, next) => {
   if (request.header('x-forwarded-proto') !== 'https') {
-    return response.redirect(`https://${request.header('host')}${request.url}`);
+    return response.redirect(`https://${request.get('host')}${request.url}`);
   }
   next();
 };
 
-if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
+if (process.env.NODE_ENV === 'production') { app.use(httpsRedirect); }
+
+app.set('port', process.env.PORT || 3000);
+app.locals.title = 'Palette Picker';
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (request, response) => {
   response.send('Welcome to Palette Picker');

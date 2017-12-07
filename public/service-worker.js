@@ -1,5 +1,4 @@
 this.addEventListener('install', event => {
-  // don't finish installing the worker until everything in the block is succesful
   event.waitUntil(
     caches.open('assets-v1')
       .then(cache => {
@@ -9,9 +8,9 @@ this.addEventListener('install', event => {
           '/css/styles.css',
           '/assets/locked.svg',
           '/assets/unlocked.svg'
-        ]); // end cache.addAll
-      }) // end .then()
-  ); // end waitUntil
+        ]);
+      })
+  );
 });
 
 this.addEventListener('fetch', event => {
@@ -19,5 +18,19 @@ this.addEventListener('fetch', event => {
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
     })
-  ); // end respondWith
+  );
+});
+
+this.addEventListener('activate', event => {
+  const cacheWhiteList = ['assets-v1'];
+
+  event.waitUntil(
+    caches.keys().then(keyList => {
+      return Promise.all(keyList.map(key => {
+        if (cacheWhiteList.indexOf(key) === -1) {
+          return caches.delete(key);
+        }
+      }));
+    })
+  );
 });
