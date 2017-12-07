@@ -201,7 +201,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
       .then(registration => {
         //eslint-disable-next-line
-        console.log('ServiceWorker registration successful');
+        console.log(`ServiceWorker ${registration} successful`);
       })
       .catch(error => {
         //eslint-disable-next-line
