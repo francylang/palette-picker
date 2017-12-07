@@ -63,7 +63,7 @@ h1 {
   justify-content: center;
   align-items: center;
   width: 95%;
-  margin: 35px;
+  margin: 0 0 0 17px;
 }
 
 .new-palette-drop-down {
@@ -73,9 +73,9 @@ h1 {
 
 .new-palette-name {
   font-size: 20px;
-  margin: 0 6px 0 30px;
+  margin: 0 6px 0 11px;
   padding: 5px 0 0 5px;
-  width: 240px;
+  width: 47%;
 }
 
 .new-palette-save-button {
