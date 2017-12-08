@@ -230,7 +230,8 @@ h3 {
   }
 
   h1 {
-    width: 100%;
+    display: inline-block;
+    width: 100vw;
     font-size: 55px;
   }
 
@@ -248,29 +249,29 @@ h3 {
   }
 
   .new-palette-container {
-    width: auto;
+    width: 100vw;
+    margin: 0;
   }
 
   .new-palette-name {
     margin: auto;
+    width: 100vw;
   }
 
   .new-project-container {
     display: flex;
-    width: 80%;
-    margin: 10px;
+    width: 100vw;
+    /*margin: 10px;*/
   }
 
   .create-new-projects-container {
-    /*justify-content: center;
-    align-items: center;
-    width: auto;
-    margin-left: 0;*/
+    width: 100vw;
+    margin: 0;
   }
 
   .new-projects {
-    flex-wrap: nowrap;
     margin-left: 0;
+    width: 100vw;
   }
 
   .new-project-title {
@@ -279,7 +280,7 @@ h3 {
   }
 
   aside {
-    width: 110%;
+    width: 100vw;
   }
 
   .new-project-save-button {
