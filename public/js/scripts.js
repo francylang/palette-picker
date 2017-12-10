@@ -1,6 +1,115 @@
+
 $(document).ready(() => {
   updateRandomColors();
   fetchAllProjects();
+});
+
+// INDEXEDDB
+//eslint-disable-next-line
+let db = new Dexie('palettePicker');
+
+db.version(1).stores({
+  projects: 'id, project_title',
+  palettes: 'id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id'
+});
+
+const saveOfflineProjects = (project) => {
+  return db.projects.add(project);
+};
+
+const saveOfflinePalettes = (palette) => {
+  return db.palettes.add(palette);
+};
+
+const loadOfflineProjects = () => {
+  return db.projects.toArray();
+};
+
+const getOfflineProjects = () => {
+  loadOfflineProjects()
+    .then(projects => appendProject(projects))
+    .catch(error => {
+      throw error;
+    });
+};
+
+const loadOfflinePalettes = () => {
+  return db.palettes.toArray();
+};
+
+const getOfflinePalettes = () => {
+  loadOfflinePalettes
+    .then(palettes => {
+      // const indexedPalettes = palettes.filter(palette => palette.project_id === id);
+      appendPalettes(palettes);
+    })
+    .catch(error => {
+      throw error;
+    });
+};
+
+const setPendingProjectsToSynced = () => {
+  return db.projects.where('status').equals('pendingSync').modify({status: 'synced'});
+};
+
+const setPendingPalettesToSynced = () => {
+  return db.palettes.where('status').equals('pendingSync').modify({status: 'synced'});
+};
+
+const sentProjectToSync = project => {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'projects',
+    project
+  });
+};
+
+const sendPaletteToSync = palette => {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'palettes',
+    palette
+  });
+};
+
+const indexedDBProjects = project => {
+  /*eslint-disable no-console*/
+  saveOfflineProjects({
+    id: project.id,
+    project_title: project.project_title
+  })
+    .then(() => console.log('IndexedDB Success'))
+    .catch(error => console.error('Error adding data to indexedDB', error));
+};
+
+const indexedDBPalettes = palette => {
+  /*eslint-disable no-console*/
+  saveOfflinePalettes({
+    id: palette.id,
+    palette_title: palette.palette_title,
+    hex_code_1: palette.hex_code_1,
+    hex_code_2: palette.hex_code_2,
+    hex_code_3: palette.hex_code_3,
+    hex_code_4: palette.hex_code_4,
+    hex_code_5: palette.hex_code_5,
+    project_Id: palette.project_id
+  })
+    .then(() => console.log('IndexedDB Success'))
+    .catch(error => console.error('Error adding data to indexedDB', error));
+};
+
+navigator.serviceWorker.addEventListener('message', event => {
+  /*eslint-disable no-console*/
+  if (event.data.type === 'project') {
+    setPendingProjectsToSynced()
+      .then(result => {
+        console.log('send log', result);
+      })
+      .catch(error => console.error(error));
+  } else if (event.data.type === 'palette') {
+    setPendingPalettesToSynced()
+      .then(() => {
+      })
+      .catch(error => console.error(error));
+  }
 });
 
 const generateRandomColor = () => {
@@ -35,7 +144,7 @@ const toggleLocked = () => {
   $(event.target).parents('.color').toggleClass('locked');
 };
 
-const fetchAllProjects = () => {
+const fetchAllProjects = (project) => {
   fetch('/api/v1/projects')
     .then(response => response.json())
     .then((storedProjects) => {
@@ -43,7 +152,8 @@ const fetchAllProjects = () => {
       fetchPalettes(storedProjects);
     })
     //eslint-disable-next-line
-    .catch(error => console.log(error));
+    .catch(() => getOfflineProjects(project))
+
 };
 
 const fetchPalettes = (projects) => {
@@ -51,13 +161,16 @@ const fetchPalettes = (projects) => {
     projectPalettesToFetch(project);
   })
     //eslint-disable-next-line
-    .catch(error => console.log(error));
+    .catch(() => getOfflinePalettes(project))
 };
 
 const projectPalettesToFetch = (project) => {
   fetch(`/api/v1/projects/${project.id}/palettes`)
     .then(response => response.json())
-    .then(palettes => appendPalettes(palettes));
+    .then(palettes => appendPalettes(palettes))
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
+
 };
 
 const appendProject = (projects) => {
@@ -93,7 +206,7 @@ const projectTitleToAppend = (project) => {
   );
 };
 
-const paletteToAppend = ({ id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id}) => {
+const paletteToAppend = ({ id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id }) => {
   const asideColorPalette = [hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5];
 
   $(`.project-${project_id}`).append(
@@ -150,7 +263,10 @@ const postProject = () => {
     headers: { 'Content-Type': 'application/json' },
   })
     .then(response => response.json())
-    .then(project => appendProject(project))
+    .then((project) => {
+      appendProject(project);
+      indexedDBProjects(project[0]);
+    })
     //eslint-disable-next-line
     .catch(error => console.log(error));
   $('.new-project-title').val('');
@@ -180,9 +296,13 @@ const postPalette = () => {
     headers: { 'content-type': 'application/json' }
   })
     .then(response => response.json())
-    .then(palette => appendPalettes(palette))
+    .then(palette => {
+      appendPalettes(palette);
+      indexedDBPalettes(palette[0]);
+    })
     //eslint-disable-next-line
     .catch(error => console.log(error));
+  $('.new-palette-name').val('');
 };
 
 const deletePalette = (eventTarget) => {
@@ -190,16 +310,22 @@ const deletePalette = (eventTarget) => {
 
   fetch(`/api/v1/palettes/${paletteId}`, {
     method: 'DELETE'
-  })
+  });
   //eslint-disable-next-line
-    .catch(error => console.log(error));
   $(eventTarget).closest('.palette').remove();
+};
+
+const sendMessageToSync = project => {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'add-project',
+    project: project
+  });
 };
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     /*eslint-disable no-console*/
-    navigator.serviceWorker.register('./service-worker.js')
+    navigator.serviceWorker.register('../service-worker.js')
       .then(registration => {
         console.log(`ServiceWorker ${registration} successful`);
       })
@@ -208,6 +334,7 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
 
 
 $('.generate-button').on('click', updateRandomColors);
