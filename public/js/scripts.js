@@ -17,7 +17,7 @@ const saveOfflineProjects = project => {
   return db.projects.add(project);
 };
 
-const saveOfflinePalettes = palette => {
+const saveOfflinePalettes = (palette) => {
   return db.palettes.add(palette);
 };
 
@@ -137,9 +137,12 @@ const postProject = () => {
   $('.new-project-title').val('');
 };
 
-const getOfflinePalettes = () => {
-  loadOfflinePalettes()
-    .then(palettes => appendPalettes(palettes))
+const getOfflinePalettes = (id) => {
+  loadOfflinePalettes(id)
+    .then(palettes =>  {
+      const dbPalettes = palettes.filter(palette => palette.project_id === id);
+      appendPalettes(dbPalettes);
+    })
     .catch(error => console.error(error));
 };
 
@@ -218,7 +221,7 @@ const postPalette = () => {
   })
     .then(response => response.json())
     .then(palette => {
-      indexedDBPalettes(palette);
+      indexedDBPalettes(palette[0]);
       appendPalettes(palette);
     })
     //eslint-disable-next-line
