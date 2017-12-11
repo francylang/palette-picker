@@ -37,11 +37,11 @@ const loadOfflinePalettes = () => {
   return db.palettes.toArray();
 };
 
-const getOfflinePalettes = () => {
-  loadOfflinePalettes
+const getOfflinePalettes = (id) => {
+  loadOfflinePalettes()
     .then(palettes => {
-      // const indexedPalettes = palettes.filter(palette => palette.project_id === id);
-      appendPalettes(palettes);
+      const indexedPalettes = palettes.filter(palette => palette.project_id === id);
+      appendPalettes(indexedPalettes);
     })
     .catch(error => {
       throw error;
@@ -72,6 +72,7 @@ const sendPaletteToSync = palette => {
 
 const indexedDBProjects = project => {
   /*eslint-disable no-console*/
+  console.log(project);
   saveOfflineProjects({
     id: project.id,
     project_title: project.project_title
