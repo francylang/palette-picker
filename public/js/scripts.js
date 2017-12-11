@@ -13,11 +13,11 @@ db.version(1).stores({
   palettes: 'id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id'
 });
 
-const saveOfflineProjects = (project) => {
+const saveOfflineProjects = project => {
   return db.projects.add(project);
 };
 
-const saveOfflinePalettes = (palette) => {
+const saveOfflinePalettes = palette => {
   return db.palettes.add(palette);
 };
 
@@ -25,93 +25,9 @@ const loadOfflineProjects = () => {
   return db.projects.toArray();
 };
 
-const getOfflineProjects = () => {
-  loadOfflineProjects()
-    .then(projects => appendProject(projects))
-    .catch(error => {
-      throw error;
-    });
-};
-
 const loadOfflinePalettes = () => {
   return db.palettes.toArray();
 };
-
-const getOfflinePalettes = (id) => {
-  loadOfflinePalettes()
-    .then(palettes => {
-      const indexedPalettes = palettes.filter(palette => palette.project_id === id);
-      appendPalettes(indexedPalettes);
-    })
-    .catch(error => {
-      throw error;
-    });
-};
-
-const setPendingProjectsToSynced = () => {
-  return db.projects.where('status').equals('pendingSync').modify({status: 'synced'});
-};
-
-const setPendingPalettesToSynced = () => {
-  return db.palettes.where('status').equals('pendingSync').modify({status: 'synced'});
-};
-
-const sentProjectToSync = project => {
-  navigator.serviceWorker.controller.postMessage({
-    type: 'projects',
-    project
-  });
-};
-
-const sendPaletteToSync = palette => {
-  navigator.serviceWorker.controller.postMessage({
-    type: 'palettes',
-    palette
-  });
-};
-
-const indexedDBProjects = project => {
-  /*eslint-disable no-console*/
-  console.log(project);
-  saveOfflineProjects({
-    id: project.id,
-    project_title: project.project_title
-  })
-    .then(() => console.log('IndexedDB Success'))
-    .catch(error => console.error('Error adding data to indexedDB', error));
-};
-
-const indexedDBPalettes = palette => {
-  /*eslint-disable no-console*/
-  saveOfflinePalettes({
-    id: palette.id,
-    palette_title: palette.palette_title,
-    hex_code_1: palette.hex_code_1,
-    hex_code_2: palette.hex_code_2,
-    hex_code_3: palette.hex_code_3,
-    hex_code_4: palette.hex_code_4,
-    hex_code_5: palette.hex_code_5,
-    project_Id: palette.project_id
-  })
-    .then(() => console.log('IndexedDB Success'))
-    .catch(error => console.error('Error adding data to indexedDB', error));
-};
-
-navigator.serviceWorker.addEventListener('message', event => {
-  /*eslint-disable no-console*/
-  if (event.data.type === 'project') {
-    setPendingProjectsToSynced()
-      .then(result => {
-        console.log('send log', result);
-      })
-      .catch(error => console.error(error));
-  } else if (event.data.type === 'palette') {
-    setPendingPalettesToSynced()
-      .then(() => {
-      })
-      .catch(error => console.error(error));
-  }
-});
 
 const generateRandomColor = () => {
   const characters = '0123456789ABCDEF';
@@ -145,45 +61,34 @@ const toggleLocked = () => {
   $(event.target).parents('.color').toggleClass('locked');
 };
 
-const fetchAllProjects = (project) => {
+const getOfflineProjects = () => {
+  loadOfflineProjects()
+    .then(projects => {
+      appendProject(projects);
+      fetchPalettes(projects);
+    })
+    //eslint-disable-next-line
+    .catch(error => console.error(error));
+};
+
+const fetchAllProjects = () => {
   fetch('/api/v1/projects')
     .then(response => response.json())
-    .then((storedProjects) => {
+    .then(storedProjects => {
       appendProject(storedProjects);
       fetchPalettes(storedProjects);
     })
-    //eslint-disable-next-line
-    .catch(() => getOfflineProjects(project))
-
-};
-
-const fetchPalettes = (projects) => {
-  projects.forEach((project) => {
-    projectPalettesToFetch(project);
-  })
-    //eslint-disable-next-line
-    .catch(() => getOfflinePalettes(project))
-};
-
-const projectPalettesToFetch = (project) => {
-  fetch(`/api/v1/projects/${project.id}/palettes`)
-    .then(response => response.json())
-    .then(palettes => appendPalettes(palettes))
-    //eslint-disable-next-line
-    .catch(error => console.log(error));
-
+    .catch((error) => {
+      getOfflineProjects();
+      //eslint-disable-next-line
+      console.error(error);
+    });
 };
 
 const appendProject = (projects) => {
   projects.forEach((project) => {
     projectToAppend(project);
     projectTitleToAppend(project);
-  });
-};
-
-const appendPalettes = (palettes) => {
-  palettes.forEach((palette) => {
-    paletteToAppend(palette);
   });
 };
 
@@ -207,6 +112,53 @@ const projectTitleToAppend = (project) => {
   );
 };
 
+const indexedDBProjects = (id, project_title) => {
+  /*eslint-disable no-console*/
+  saveOfflineProjects({ id, project_title })
+    .then(() => console.log('IndexedDB Success'))
+    .catch(error => console.error('Error adding data to indexedDB', error));
+};
+
+const postProject = () => {
+  const projectTitle = $('.new-project-title').val();
+
+  fetch('/api/v1/projects', {
+    method: 'POST',
+    body: JSON.stringify({ project_title: projectTitle }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then(response => response.json())
+    .then((project) => {
+      appendProject(project);
+      indexedDBProjects(project[0].id, project[0].project_title);
+    })
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
+  $('.new-project-title').val('');
+};
+
+const getOfflinePalettes = () => {
+  loadOfflinePalettes()
+    .then(palettes => appendPalettes(palettes))
+    .catch(error => console.error(error));
+};
+
+const fetchPalettes = projects => {
+  projects.forEach((project) => {
+    fetch(`/api/v1/projects/${project.id}/palettes`)
+      .then(response => response.json())
+      .then(palettes => appendPalettes(palettes))
+      //eslint-disable-next-line
+      .catch(() => getOfflinePalettes(project.id));
+  });
+};
+
+const appendPalettes = (palettes) => {
+  palettes.forEach((palette) => {
+    paletteToAppend(palette);
+  });
+};
+
 const paletteToAppend = ({ id, palette_title, hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5, project_id }) => {
   const asideColorPalette = [hex_code_1, hex_code_2, hex_code_3, hex_code_4, hex_code_5];
 
@@ -228,6 +180,60 @@ const paletteToAppend = ({ id, palette_title, hex_code_1, hex_code_2, hex_code_3
         </div>
       </div>`
   );
+};
+
+const indexedDBPalettes = palette => {
+  /*eslint-disable no-console*/
+  saveOfflinePalettes({
+    id: palette.id,
+    palette_title: palette.palette_title,
+    hex_code_1: palette.hex_code_1,
+    hex_code_2: palette.hex_code_2,
+    hex_code_3: palette.hex_code_3,
+    hex_code_4: palette.hex_code_4,
+    hex_code_5: palette.hex_code_5,
+    project_id: palette.project_id
+  })
+    .then(() => console.log('IndexedDB Success'))
+    .catch(error => console.error('Error adding data to indexedDB', error));
+};
+
+const postPalette = () => {
+  const newPalette = {
+    palette_title: $('.new-palette-name').val(),
+    hex_code_1: $('.code1').text(),
+    hex_code_2: $('.code2').text(),
+    hex_code_3: $('.code3').text(),
+    hex_code_4: $('.code4').text(),
+    hex_code_5: $('.code5').text()
+  };
+  const projectId = $('.new-palette-drop-down')
+    .find('option:selected')
+    .prop('value');
+
+  fetch(`/api/v1/projects/${projectId}/palettes`, {
+    method: 'POST',
+    body: JSON.stringify(newPalette),
+    headers: { 'content-type': 'application/json' }
+  })
+    .then(response => response.json())
+    .then(palette => {
+      indexedDBPalettes(palette);
+      appendPalettes(palette);
+    })
+    //eslint-disable-next-line
+    .catch(error => console.log(error));
+  $('.new-palette-name').val('');
+};
+
+const deletePalette = (eventTarget) => {
+  const paletteId = $(eventTarget).closest('.palette').attr('data-id');
+
+  fetch(`/api/v1/palettes/${paletteId}`, {
+    method: 'DELETE'
+  });
+  //eslint-disable-next-line
+  $(eventTarget).closest('.palette').remove();
 };
 
 const updateAsidePalette = () => {
@@ -255,78 +261,15 @@ const checkForDuplicateProjects = () => {
     .catch(error => console.log(error));
 };
 
-const postProject = () => {
-  const projectTitle = $('.new-project-title').val();
-
-  fetch('/api/v1/projects', {
-    method: 'POST',
-    body: JSON.stringify({ project_title: projectTitle }),
-    headers: { 'Content-Type': 'application/json' },
-  })
-    .then(response => response.json())
-    .then((project) => {
-      appendProject(project);
-      indexedDBProjects(project[0]);
-    })
-    //eslint-disable-next-line
-    .catch(error => console.log(error));
-  $('.new-project-title').val('');
-};
-
-const duplicateMessage = (projectTitle) => {
+const duplicateMessage = projectTitle => {
   alert(`The project "${projectTitle}" already exists`);
   $('.new-project-title').val('');
-};
-
-const postPalette = () => {
-  const newPalette = {
-    palette_title: $('.new-palette-name').val(),
-    hex_code_1: $('.code1').text(),
-    hex_code_2: $('.code2').text(),
-    hex_code_3: $('.code3').text(),
-    hex_code_4: $('.code4').text(),
-    hex_code_5: $('.code5').text()
-  };
-  const projectId = $('.new-palette-drop-down')
-    .find('option:selected')
-    .prop('value');
-
-  fetch(`/api/v1/projects/${projectId}/palettes`, {
-    method: 'POST',
-    body: JSON.stringify(newPalette),
-    headers: { 'content-type': 'application/json' }
-  })
-    .then(response => response.json())
-    .then(palette => {
-      appendPalettes(palette);
-      indexedDBPalettes(palette[0]);
-    })
-    //eslint-disable-next-line
-    .catch(error => console.log(error));
-  $('.new-palette-name').val('');
-};
-
-const deletePalette = (eventTarget) => {
-  const paletteId = $(eventTarget).closest('.palette').attr('data-id');
-
-  fetch(`/api/v1/palettes/${paletteId}`, {
-    method: 'DELETE'
-  });
-  //eslint-disable-next-line
-  $(eventTarget).closest('.palette').remove();
-};
-
-const sendMessageToSync = project => {
-  navigator.serviceWorker.controller.postMessage({
-    type: 'add-project',
-    project: project
-  });
 };
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     /*eslint-disable no-console*/
-    navigator.serviceWorker.register('../service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')
       .then(registration => {
         console.log(`ServiceWorker ${registration} successful`);
       })
@@ -336,6 +279,50 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+const setPendingProjectsToSynced = () => {
+  return db.projects.where('status').equals('pendingSync').modify({status: 'synced'});
+};
+
+const setPendingPalettesToSynced = () => {
+  return db.palettes.where('status').equals('pendingSync').modify({status: 'synced'});
+};
+
+const sentProjectToSync = project => {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'projects',
+    project
+  });
+};
+
+const sendMessageToSync = project => {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'add-project',
+    project: project
+  });
+};
+
+const sendPaletteToSync = palette => {
+  navigator.serviceWorker.controller.postMessage({
+    type: 'palettes',
+    palette
+  });
+};
+
+navigator.serviceWorker.addEventListener('message', event => {
+  /*eslint-disable no-console*/
+  if (event.data.type === 'project') {
+    setPendingProjectsToSynced()
+      .then(result => {
+        console.log('send log', result);
+      })
+      .catch(error => console.error(error));
+  } else if (event.data.type === 'palette') {
+    setPendingPalettesToSynced()
+      .then(() => {
+      })
+      .catch(error => console.error(error));
+  }
+});
 
 
 $('.generate-button').on('click', updateRandomColors);
