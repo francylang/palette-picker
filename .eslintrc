@@ -33,6 +33,7 @@
     "no-unused-vars": ["error", { "varsIgnorePattern": "config || Adapter"}]
   },
   "globals": {
-    "expect": true
+    "expect": true,
+    "dexie": true
   }
 }

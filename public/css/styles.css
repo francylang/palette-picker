@@ -192,7 +192,7 @@ aside {
 
 h3 {
   font-size: 20px;
-  margin-bottom: 0;
+  margin: 10px;
 }
 
 .new-project-container {
@@ -233,14 +233,18 @@ h3 {
     display: inline-block;
     width: 100vw;
     font-size: 55px;
+    margin-bottom: 10px;
+  }
+  .generate-button-container {
+    width: 100vw;  
   }
 
   .generate-button {
-    width: 70%;
+    margin-bottom: 30px;
   }
 
   .color-container {
-    margin-top: 133px;
+    margin-top: 20px;
   }
   .projects-palettes-container {
     display: flex;
@@ -276,7 +280,10 @@ h3 {
 
   .new-project-title {
     height: 42px;
-    width: 70%;
+  }
+
+  .new-palette-drop-down {
+    margin: 10px;
   }
 
   aside {
